@@ -1,10 +1,12 @@
 # PokeAPI
 
-A PokeAPI wrapper written in pure Dart. All operations are fully asynchronous and the results are saved in a json file located in `bin/output`.
+A PokeAPI wrapper written in pure Dart. All operations are fully asynchronous and the results are saved in json files located in `bin/output`.
+
+All the data is gathered from pokeapi.co. They did an amazing job with their API and this project wouldn't be possible without them.
 
 ## Usage
 
-In the projects root directory, simply run `api`
+In the projects root directory, simply run `api`. The models used by the api itself are located in `lib/api/model`. The models for using the outputted data are located in `lib/app/model`.
 
 
 ### Arguments
@@ -12,7 +14,9 @@ In the projects root directory, simply run `api`
 * The range of pokémon the api needs to load. Load `amount` pokémon starting from `start`.
 
     `-r{start}-{amount}`
+
     example usage: `-r10-40`
+
 * Run in verbose, this saves as much data as possible to the output.
 
     `-v`
