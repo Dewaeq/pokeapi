@@ -9,6 +9,8 @@ class PokemonSpecies {
 
   String habitat;
 
+  String growthRate;
+
   String evolutionChainUrl;
 
   int evolutionChainId;
@@ -39,6 +41,7 @@ class PokemonSpecies {
         'description': description,
         'generation': generation,
         'habitat': habitat,
+        'growth_rate': growthRate,
         'evolution_chain_id': evolutionChainId,
         'base_happiness': baseHappiness,
         'gender_rate': genderRate,
@@ -63,6 +66,8 @@ class PokemonSpecies {
       (e) => e['language']['name'] == 'en',
       orElse: () => null,
     )['genus'];
+    growthRate =
+        data['growth_rate'] == null ? null : data['growth_rate']['name'];
     habitat = data['habitat'] == null ? null : data['habitat']['name'];
     eggGroups = List<String>.from(data['egg_groups'].map((e) => e['name']));
     evolutionChainUrl = data['evolution_chain']['url'];

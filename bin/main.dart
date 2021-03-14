@@ -105,9 +105,9 @@ void main(List<String> arguments) async {
   handleArgs(arguments);
   await init();
 
-//   if (filters['include_abilities']) {
-  abilities = await api.getAllPokemonAbilities();
-//   }
+  if (filters['include_abilities']) {
+    abilities = await api.getAllPokemonAbilities();
+  }
   pokemons = await api.getAllPokemonInRange(min: min, max: max);
 
   pokemons.sort((a, b) => a.order.compareTo(b.order));
