@@ -1,11 +1,16 @@
 import 'package:PokeAPI/api/model/PokemonEvolution.dart';
+import 'package:PokeAPI/constants/constants.dart';
 
 class PokemonSpecies {
   String name;
 
   String description;
 
-  String generation;
+  String region;
+
+  int generationId;
+
+  String typeDescription;
 
   String habitat;
 
@@ -39,7 +44,9 @@ class PokemonSpecies {
   Map<String, dynamic> toJson() => {
         'name': name,
         'description': description,
-        'generation': generation,
+        'region': region,
+        'generation_id': generationId,
+        'type_description': typeDescription,
         'habitat': habitat,
         'growth_rate': growthRate,
         'evolution_chain_id': evolutionChainId,
@@ -62,14 +69,15 @@ class PokemonSpecies {
       ),
     );
     description = des['flavor_text'].replaceAll('\n', ' ');
-    generation = data['genera'].firstWhere(
+    region = GENERATIONS[data['generation']['name']]['region'];
+    generationId = GENERATIONS[data['generation']['name']]['id'];
+    typeDescription = data['genera'].firstWhere(
       (e) => e['language']['name'] == 'en',
       orElse: () => null,
     )['genus'];
     growthRate =
         data['growth_rate'] == null ? null : data['growth_rate']['name'];
     habitat = data['habitat'] == null ? null : data['habitat']['name'];
-    eggGroups = List<String>.from(data['egg_groups'].map((e) => e['name']));
     evolutionChainUrl = data['evolution_chain']['url'];
     baseHappiness = data['base_happiness'];
     captureRate = data['capture_rate'];
@@ -77,8 +85,6 @@ class PokemonSpecies {
     hatchCounter = data['hatch_counter'];
     legendary = data['is_legendary'];
     mythical = data['is_mythical'];
-    for (var i = 0; i < data['egg_groups'].length; i++) {
-      eggGroups.add(data['egg_groups'][i]['name']);
-    }
+    eggGroups = List<String>.from(data['egg_groups'].map((e) => e['name']));
   }
 }
