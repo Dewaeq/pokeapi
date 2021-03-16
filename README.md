@@ -6,8 +6,11 @@ All the data is gathered from pokeapi.co. They did an amazing job with their API
 
 ## Usage
 
-In the projects root directory, simply run `api`. The models used by the api itself are located in `lib/api/model`. The models for using the outputted data are located in `lib/app/model`.
+In the projects root directory, simply run `api` (optionally followed by your arguments). The models used by the api itself are located in `lib/api/model`. 
 
+<!---
+The models for using the outputted data are located in `lib/app/model`.
+-->
 
 ### Arguments
 
