@@ -24,6 +24,9 @@ class PokemonSpecies {
   int baseHappiness;
 
   /// Max is 255
+  int baseExperience;
+
+  /// Max is 255
   int captureRate;
 
   /// The chance of this Pokémon being female, in eighths; or -1 for genderless
@@ -51,6 +54,7 @@ class PokemonSpecies {
         'growth_rate': growthRate,
         'evolution_chain_id': evolutionChainId,
         'base_happiness': baseHappiness,
+        'base_experience': baseExperience,
         'gender_rate': genderRate,
         'capture_rate': captureRate,
         'hatch_counter': hatchCounter,
@@ -80,11 +84,16 @@ class PokemonSpecies {
     habitat = data['habitat'] == null ? null : data['habitat']['name'];
     evolutionChainUrl = data['evolution_chain']['url'];
     baseHappiness = data['base_happiness'];
+    baseExperience = data['base_experience'];
     captureRate = data['capture_rate'];
     genderRate = data['gender_rate'];
     hatchCounter = data['hatch_counter'];
     legendary = data['is_legendary'];
     mythical = data['is_mythical'];
     eggGroups = List<String>.from(data['egg_groups'].map((e) => e['name']));
+    eggGroups = eggGroups.map((e) {
+      if (e == 'no-eggs') return 'unknown';
+      return e;
+    }).toList();
   }
 }
