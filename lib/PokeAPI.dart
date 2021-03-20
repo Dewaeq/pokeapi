@@ -84,6 +84,8 @@ class PokeAPI {
           await getPokemonEvolutions(chainUrl: species.evolutionChainUrl);
       if (result != null) {
         species.evolutions = result['evolutions'];
+      } else {
+        species.evolutionChainId = null;
       }
     }
     return species;
@@ -184,6 +186,8 @@ class PokeAPI {
 
     for (var i = 0; i < size; i++) {
       String url = data['results'][i]['url'];
+
+      /// Fix for pokeapi's issues with cloudflare
       url = url.endsWith('/') ? url : url + '/';
 
       var p = await getPokemonByUrl(url: url);
