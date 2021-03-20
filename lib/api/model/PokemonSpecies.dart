@@ -83,8 +83,10 @@ class PokemonSpecies {
         data['growth_rate'] == null ? null : data['growth_rate']['name'];
     habitat = data['habitat'] == null ? null : data['habitat']['name'];
     evolutionChainUrl = data['evolution_chain']['url'];
+    evolutionChainId = int.tryParse(evolutionChainUrl
+        .replaceAll('$BASE_URL/evolution-chain/', '')
+        .replaceAll('/', ''));
     baseHappiness = data['base_happiness'];
-    baseExperience = data['base_experience'];
     captureRate = data['capture_rate'];
     genderRate = data['gender_rate'];
     hatchCounter = data['hatch_counter'];

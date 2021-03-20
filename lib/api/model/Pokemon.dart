@@ -13,6 +13,8 @@ class Pokemon {
   int id;
   int order;
 
+  int baseExperience;
+
   /// In decimetres
   int height;
 
@@ -60,6 +62,7 @@ class Pokemon {
     }
     id = data['id'];
     order = data['order'];
+    baseExperience = data['base_experience'];
     height = data['height'];
     weight = data['weight'];
     speciesName = data['species']['name'];

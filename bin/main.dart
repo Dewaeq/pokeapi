@@ -8,14 +8,7 @@ import 'package:dart_console/dart_console.dart';
 Map<String, bool> filters = {
   'verbose': false,
   'include_abilities': false,
-  'include_forms': false,
-  'include_game_indices': false,
-  'include_held_items': false,
-  'include_moves': false,
-  'include_species': false,
-  'include_sprites': false,
-  'include_stats': false,
-  'include_types': false,
+  'include_evolutions': false,
 };
 
 File pokemonFile;
@@ -61,22 +54,8 @@ void handleArgs(List<String> arguments) {
         filters.updateAll((key, value) => true);
       } else if (arg.contains('-abilities')) {
         filters['include_abilities'] = true;
-      } else if (arg.contains('-forms')) {
-        filters['include_forms'] = true;
-      } else if (arg.contains('-indices')) {
-        filters['include_game_indices'] = true;
-      } else if (arg.contains('-items')) {
-        filters['include_held_items'] = true;
-      } else if (arg.contains('-moves')) {
-        filters['include_moves'] = true;
-      } else if (arg.contains('-species')) {
-        filters['include_species'] = true;
-      } else if (arg.contains('-sprites')) {
-        filters['include_sprites'] = true;
-      } else if (arg.contains('-stats')) {
-        filters['include_stats'] = true;
-      } else if (arg.contains('-types')) {
-        filters['include_types'] = true;
+      } else if (arg.contains('-evolutions')) {
+        filters['include_evolutions'] = true;
       } else {
         throw ('Argument $arg not found. Please try again');
       }
@@ -86,19 +65,23 @@ void handleArgs(List<String> arguments) {
 
 Future<void> init() async {
   if (filters['verbose']) {
-    pokemonFile = await File('./ouput/all_pokemon_with_data.json')
-        .create(recursive: true);
+    evolutionFile =
+        await File('./output/all_evolutions.json').create(recursive: true);
+    abilityFile =
+        await File('./output/all_abilities.json').create(recursive: true);
   } else {
-    pokemonFile =
-        await File('./output/all_pokemon.json').create(recursive: true);
+    if (filters['include_evolutions']) {
+      evolutionFile =
+          await File('./output/all_evolutions.json').create(recursive: true);
+    }
+    if (filters['include_abilities']) {
+      abilityFile =
+          await File('./output/all_abilities.json').create(recursive: true);
+    }
   }
   speciesFile = await File('./output/all_species.json').create(recursive: true);
-  evolutionFile =
-      await File('./output/all_evolutions.json').create(recursive: true);
-  abilityFile =
-      await File('./output/all_abilities.json').create(recursive: true);
-
-  api.init();
+  pokemonFile = await File('./output/all_pokemon.json').create(recursive: true);
+  api.init(includeEvolutions: filters['include_evolutions']);
 }
 
 void main(List<String> arguments) async {
@@ -113,9 +96,11 @@ void main(List<String> arguments) async {
   pokemons.sort((a, b) => a.order.compareTo(b.order));
 
   console.writeLine('applying filters...');
-  console.writeLine('processing abilities');
-  for (var ability in abilities) {
-    abilityData[ability.name] = ability.toJson();
+  if (filters['include_abilities']) {
+    console.writeLine('processing abilities');
+    for (var ability in abilities) {
+      abilityData[ability.name] = ability.toJson();
+    }
   }
   console.writeLine('processing pokemon');
 
@@ -124,52 +109,10 @@ void main(List<String> arguments) async {
     pokemonData[pokemon.name].remove('species');
     speciesData[pokemon.speciesName] = pokemon.species.toJson();
 
-    evolutionData['${pokemon.species.evolutionChainId}'] =
-        pokemon.species.evolutions.map((e) => e.toJson()).toList();
-
-    /* Map<String, dynamic> d = jsonDecode(pokemon.json_string);
-    var a = d;
-
-    if (!filters['verbose']) {
-      a['photo_url'] = pokemon.photo_url;
-      a['url'] = '$BASE_URL/pokemon/${pokemon.id}';
-      a['hp_stat'] = d['stats'][0]['base_stat'];
-      a['at_stat'] = d['stats'][1]['base_stat'];
-      a['def_stat'] = d['stats'][2]['base_stat'];
-      a['spec_at_stat'] = d['stats'][3]['base_stat'];
-      a['spec_def_stat'] = d['stats'][4]['base_stat'];
-      a['speed_stat'] = d['stats'][5]['base_stat'];
-      a['species_info'] = pokemon.species;
-      a.remove('base_experience');
-      a.remove('location_area_encounters');
-      a.remove('past_types');
+    if (filters['include_evolutions']) {
+      evolutionData['${pokemon.species.evolutionChainId}'] =
+          pokemon.species.evolutions.map((e) => e.toJson()).toList();
     }
-    List<dynamic> t = d['types'];
-    a['types'] = <String>[];
-
-    for (int i = 0; i < t.length; i++) {
-      a['types'].add(t[i]['type']['name']);
-    }
-
-    if (!filters['include_abilities']) a.remove('abilities');
-
-    if (!filters['include_forms']) a.remove('forms');
-
-    if (!filters['include_game_indices']) a.remove('game_indices');
-
-    if (!filters['include_held_items']) a.remove('held_items');
-
-    if (!filters['include_moves']) a.remove('moves');
-
-    if (!filters['include_species']) a.remove('species');
-
-    if (!filters['include_sprites']) a.remove('sprites');
-
-    if (!filters['include_stats']) a.remove('stats');
-
-    // if (!filters['include_types']) a.remove('types');
-
-    data[pokemon.name] = a; */
   }
   console.writeLine('saving data...');
   await save();
@@ -179,6 +122,10 @@ void main(List<String> arguments) async {
 Future<void> save() async {
   await pokemonFile.writeAsString(jsonEncode(pokemonData));
   await speciesFile.writeAsString(jsonEncode(speciesData));
-  await evolutionFile.writeAsString(jsonEncode(evolutionData));
-  await abilityFile.writeAsString(jsonEncode(abilityData));
+  if (filters['include_evolutions']) {
+    await evolutionFile.writeAsString(jsonEncode(evolutionData));
+  }
+  if (filters['include_abilities']) {
+    await abilityFile.writeAsString(jsonEncode(abilityData));
+  }
 }

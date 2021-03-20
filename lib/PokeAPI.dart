@@ -11,17 +11,12 @@ import 'dart:convert';
 class PokeAPI {
   final dio = Dio();
   final console = Console();
-  /* File pokemonFile;
-  File evolutionFile;
-  File speciesFile; */
+  bool _includeEvolutions = false;
 
-  void init() async {
+  void init({bool includeEvolutions}) async {
+    _includeEvolutions = includeEvolutions ?? false;
     console.writeLine('initializing');
     dio.options = BaseOptions(responseType: ResponseType.plain);
-    /* pokemonFile = await File('./input/pokemon.json').create(recursive: true);
-    evolutionFile =
-        await File('./input/evolutions.json').create(recursive: true);
-    speciesFile = await File('./input/species.json').create(recursive: true); */
   }
 
   Future<Map<String, dynamic>> getPokemonJsonById({@required int index}) async {
@@ -76,11 +71,13 @@ class PokeAPI {
 
     Map<String, dynamic> data = jsonDecode(response.data);
     var species = PokemonSpecies.fromData(data);
-    var result =
-        await getPokemonEvolutions(chainUrl: species.evolutionChainUrl);
-    if (result != null) {
-      species.evolutions = result['evolutions'];
-      species.evolutionChainId = result['id'];
+    if (_includeEvolutions) {
+      var result =
+          await getPokemonEvolutions(chainUrl: species.evolutionChainUrl);
+      if (result != null) {
+        species.evolutions = result['evolutions'];
+        //   species.evolutionChainId = result['id'];
+      }
     }
     return species;
   }
@@ -174,15 +171,12 @@ class PokeAPI {
         options: Options(responseType: ResponseType.plain));
     if (!checkResponse(response)) return null;
 
-    // await pokemonFile.writeAsString(response.data);
-
     var pokemon = <Pokemon>[];
     Map<String, dynamic> data = jsonDecode(response.data);
     var size = data['results'].length;
 
     for (var i = 0; i < size; i++) {
       String url = data['results'][i]['url'];
-      //   url = url.endsWith('/') ? url.substring(0, url.length - 1) : url;
       url = url.endsWith('/') ? url : url + '/';
       var p = await getPokemonByUrl(url: url);
       if (p != null) {
@@ -195,6 +189,7 @@ class PokeAPI {
 
         if (species != null) {
           p.species = species;
+          p.species.baseExperience = p.baseExperience;
           pokemon.add(p);
         }
       } else {
