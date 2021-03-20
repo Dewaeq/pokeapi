@@ -25,13 +25,21 @@ class PokeAPI {
   }
 
   Future<Map<String, dynamic>> getPokemonJsonByUrl(
-      {@required String url}) async {
+      {@required String url, bool recursive = false}) async {
     Response response;
     try {
       response = await dio.get(url);
     } catch (e) {
+      /// Sometimes pokeapi gives a 404 when the url ends with a slash,
+      /// sometimes they give one when it doesn't, due to some issues they're having
+      /// with CloudFlare.
+      /// This isn't the most elegant fix but it works
+      if (!recursive && url.endsWith('/')) {
+        url = url.substring(0, url.length - 1);
+        return await getPokemonJsonByUrl(url: url, recursive: true);
+      }
       console.writeErrorLine('there was an error :( while handling $url');
-      console.writeErrorLine(e);
+      console.writeErrorLine(e.toString());
       return null;
     }
     if (!checkResponse(response)) return null;
@@ -76,7 +84,6 @@ class PokeAPI {
           await getPokemonEvolutions(chainUrl: species.evolutionChainUrl);
       if (result != null) {
         species.evolutions = result['evolutions'];
-        //   species.evolutionChainId = result['id'];
       }
     }
     return species;
@@ -178,7 +185,9 @@ class PokeAPI {
     for (var i = 0; i < size; i++) {
       String url = data['results'][i]['url'];
       url = url.endsWith('/') ? url : url + '/';
+
       var p = await getPokemonByUrl(url: url);
+
       if (p != null) {
         console.clearScreen();
         console.writeLine('got ${i + 1} pokemon from database');
