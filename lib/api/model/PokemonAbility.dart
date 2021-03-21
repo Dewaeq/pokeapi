@@ -1,3 +1,5 @@
+import 'package:PokeAPI/extensions/StringExtensions.dart';
+
 class PokemonAbility {
   String name;
   String description;
@@ -25,7 +27,9 @@ class PokemonAbility {
               orElse: () => data['flavor_text_entries']
                   .firstWhere((e) => e['language']['name'] == 'en'),
             )['flavor_text']
-            .replaceAll('\n', ' ');
+            .toString()
+            .fixDescription();
+
     shortEffectDescription = data['effect_entries'].isEmpty
         ? null
         : data['effect_entries']
@@ -34,7 +38,8 @@ class PokemonAbility {
               orElse: () => data['effect_entries']
                   .firstWhere((e) => e['language']['name'] == 'en'),
             )['short_effect']
-            .replaceAll('\n', ' ');
+            .toString()
+            .fixDescription();
     effectDescription = data['effect_entries'].isEmpty
         ? null
         : data['effect_entries']
@@ -43,7 +48,8 @@ class PokemonAbility {
               orElse: () => data['effect_entries']
                   .firstWhere((e) => e['language']['name'] == 'en'),
             )['effect']
-            .replaceAll('\n', ' ');
+            .toString()
+            .fixDescription();
     pokemon = List<String>.from(
       data['pokemon'].map((e) => e['pokemon']['name']),
     );
