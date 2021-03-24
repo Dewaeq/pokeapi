@@ -7,7 +7,7 @@ environment:
 
 dependencies:
   http:
-  dio: 3.0.9
+  dio: ^3.0.10
   meta:
   dart_console:
 
