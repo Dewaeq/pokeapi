@@ -1,5 +1,4 @@
 @echo off
 
-cd bin
-dart main.dart %*
-cd ..
+
+dart bin/main.dart %*
