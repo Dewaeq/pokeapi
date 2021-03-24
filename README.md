@@ -1,6 +1,6 @@
 # PokeAPI
 
-A PokeAPI wrapper written in pure Dart. All operations are fully asynchronous and the results are saved in json files located in `bin/output`.
+A PokeAPI wrapper written in pure Dart. All operations are fully asynchronous and the results are saved in json files located in `/output`.
 
 All the data is gathered from pokeapi.co. They did an amazing job with their API and this project wouldn't be possible without them.
 
